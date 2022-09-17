@@ -1,20 +1,18 @@
+from sqlalchemy import MetaData
+from sqlalchemy import Table, Column, Integer, String
+from sqlalchemy import create_engine
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+metadata_obj = MetaData()
+engine = create_engine('sqlite:///poster.db')
 
-#we make our new base class
-Base = declarative_base()
+metadata_obj = MetaData()
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///posts.db'
 db = SQLAlchemy(app)
 
-#post constructor, this is what we will store information as, any user based requests will be done throuogh
-#user look ups, but lets be honest, we wont add that
-
-#so here is our post class
 class Post(db.Model):
     #every post is going to have a image, a title - aka location, time, isverfied boolean
     title_tag = db.Column(db.String(60), nullable = False) #max title length 60 char
@@ -30,14 +28,11 @@ class Post(db.Model):
         return '<Name %r>' % self.name
 
 
+user = Table('user', metadata_obj,
+    Column('user_id', Integer, primary_key=True),
+    Column('user_name', String(16), nullable=False),
+    Column('email_address', String(60), key='email'),
+    Column('nickname', String(50), nullable=False)
+)
 
-#db.create_all()
-
-#then down here we have our routes
-@app.route('/posts/add', methods=['GET', 'POST'])
-def add_post(title, ID, timeup):
-    posting = Post(title_tag = title, useID =ID, time=timeup, isver=0, upvote=1, downvote=0)
-    print(Post)
-    db.session.add(posting)
-    db.session.commit()
-print(db)
+metadata_obj.create_all(engine)

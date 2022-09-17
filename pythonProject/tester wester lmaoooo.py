@@ -16,10 +16,14 @@ from sqlalchemy.orm import sessionmaker
 from sqlalchemy import create_engine
 import pandas as pd
 
-for m in session.query(model).all():
-    print [getattr(m, x.__str__().split('.')[1]) for x in model.__table__.columns]
-    # additional code
 
 
-#add_post('test', 132, 0o317)
+#add_post('test', 133332, 0o317)
+
+import sqlalchemy as db
+
+engine = db.create_engine('sqlite:///census.sqlite')
+connection = engine.connect()
+metadata = db.MetaData()
+census = db.Table('census', metadata, autoload=True, autoload_with=engine)
 
