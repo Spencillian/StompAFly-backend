@@ -27,12 +27,4 @@ class Post(db.Model):
     def __repr__(self):
         return '<Name %r>' % self.name
 
-
-user = Table('user', metadata_obj,
-    Column('user_id', Integer, primary_key=True),
-    Column('user_name', String(16), nullable=False),
-    Column('email_address', String(60), key='email'),
-    Column('nickname', String(50), nullable=False)
-)
-
 metadata_obj.create_all(engine)
