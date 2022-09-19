@@ -1,8 +1,8 @@
 from flask import Flask
 from flask_sqlalchemy import SQLAlchemy
 
-from sqlalchemy import Column, Integer, String, ForeignKey
-from sqlalchemy.orm import declarative_base, relationship
+from sqlalchemy import Column, Integer, String, ForeignKey, create_engine
+from sqlalchemy.orm import declarative_base, sessionmaker
 
 #we make our new base class
 Base = declarative_base()
@@ -14,22 +14,35 @@ db = SQLAlchemy(app)
 #post constructor, this is what we will store information as, any user based requests will be done throuogh
 #user look ups, but lets be honest, we wont add that
 
-#so here is our post class
-class Post(db.Model):
-    #every post is going to have a image, a title - aka location, time, isverfied boolean
-    title_tag = db.Column(db.String(60), nullable = False) #max title length 60 char
-    useID = db.Column(db.Integer, primary_key = True)
-    time = db.Column(db.Integer, nullable = False)
-    #what type do images save as??
-    #imgsave = Column(, nullable = False)
-    isver = db.Column(db.Integer, nullable = False)
-    upvote = db.Column(db.Integer, nullable = False)
-    downvote = db.Column(db.Integer, nullable = False)
+#so here is our post clas
 
-    def __repr__(self):
-        return '<Name %r>' % self.name
+class Poster(Base):
+    __tablename__ = "posts"
+    id = Column('id', Integer, primary_key = True)
+    title_tag = Column('title', String)
+
+engine = create_engine('sqlite:///posts.db')
+Base.metadata.create_all(bind = engine )
+Session = sessionmaker(bind=engine)
+
+session = Session()
+'''post1 = Poster()  
+post1.id = 13433
+post1.title_tag = "i am a moron"
+
+session.add(post1)
+session.commit()'''
+
+postings = session.query(Poster).all()
+for pot in postings:
+    first = "title: " and pot.title_tag
+    print(first)
+    second = " ID: " and str(pot.id)
+    third = first + second
+    print(third)
 
 
+session.close
 
 #db.create_all()
 
